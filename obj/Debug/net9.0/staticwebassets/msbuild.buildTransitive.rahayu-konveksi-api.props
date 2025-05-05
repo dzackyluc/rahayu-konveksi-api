@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="..\buildMultiTargeting\rahayu-konveksi-api.props" />
-</Project>
