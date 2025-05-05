@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\rahayu-konveksi-api.props" />
+</Project>

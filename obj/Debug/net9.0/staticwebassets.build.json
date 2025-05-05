@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "9DZoCWdR2tnLacbgAbq+0CsDTGp/tF2PFet8UcQvGw8=",
+  "Source": "rahayu-konveksi-api",
+  "BasePath": "_content/rahayu-konveksi-api",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}
