@@ -42,3 +42,4 @@ D:\Data\CollegeRepository\rahayu-konveksi-api\bin\Debug\net9.0\Microsoft.Identit
 D:\Data\CollegeRepository\rahayu-konveksi-api\bin\Debug\net9.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
 D:\Data\CollegeRepository\rahayu-konveksi-api\bin\Debug\net9.0\Microsoft.IdentityModel.Tokens.dll
 D:\Data\CollegeRepository\rahayu-konveksi-api\bin\Debug\net9.0\System.IdentityModel.Tokens.Jwt.dll
+D:\Data\CollegeRepository\rahayu-konveksi-api\obj\Debug\net9.0\rahayu-konveksi-api.sourcelink.json

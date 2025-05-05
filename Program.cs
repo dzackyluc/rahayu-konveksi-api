@@ -12,9 +12,14 @@ builder.Services.Configure<RahayuKonveksiDatabaseSettings>(
     builder.Configuration.GetSection("RahayuKonveksiDatabase")
 );
 
+builder.Services.Configure<XenditConnectionSettings>(
+    builder.Configuration.GetSection("XenditConnection")
+);
+
 builder.Services.AddSingleton<UsersService>();
 builder.Services.AddSingleton<EmployeesService>();
 builder.Services.AddSingleton<ProductsService>();
+builder.Services.AddSingleton<EwalletService>();
 
 // Add JWT Authentication
 var key = Encoding.ASCII.GetBytes("GenBadaiKelompok5xRahayuKonveksi2025"); // Replace with a secure key
