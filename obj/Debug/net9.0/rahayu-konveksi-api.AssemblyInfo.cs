@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("rahayu-konveksi-api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+58e7347a9ca4cee8a2b8b224b3e0b02701986bcd")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+41f78512b726b6ffa03f4dc9c42a140fa618c78c")]
 [assembly: System.Reflection.AssemblyProductAttribute("rahayu-konveksi-api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("rahayu-konveksi-api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
