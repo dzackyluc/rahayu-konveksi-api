@@ -34,15 +34,9 @@ public class XenditWebhookController(ILogger<XenditWebhookController> logger, IO
             // Example:
             // if (eventType == "invoice.expired") { ... }
         }
-        else if (payload.TryGetProperty("owner_id", out var typeElement))
-        {
-            string owner_id = typeElement.GetString() ?? string.Empty;
-            _logger.LogInformation("Received Xendit owner_id: {owner_id}", owner_id);
-            _logger.LogInformation("Payload: {Payload}", payload.ToString());
-        }
         else
         {
-            _logger.LogWarning("Event and owner_id not found in payload");
+            _logger.LogWarning("Event and not found in payload");
             _logger.LogInformation("Payload: {Payload}", payload.ToString());
             return BadRequest("Invalid payload");
         }

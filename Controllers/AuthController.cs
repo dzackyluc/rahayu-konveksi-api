@@ -34,7 +34,7 @@ namespace rahayu_konveksi_api.Controllers
             }
 
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes("GenBadaiKelompok5xRahayuKonveksi2025"); // Replace with the same key used in Program.cs
+            var key = Encoding.ASCII.GetBytes("GenBadaiKelompok5xRahayuKonveksi2025");
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(
@@ -56,7 +56,7 @@ namespace rahayu_konveksi_api.Controllers
 
         // POST: api/auth/getAllUsers
         [HttpGet("getAllUsers")]
-        [Authorize]
+        // [Authorize]
         public async Task<IActionResult> GetAllUsers()
         {
             var users = await _usersService.GetAllUsersAsync();
