@@ -2,14 +2,19 @@ using rahayu_konveksi_api.Models;
 using rahayu_konveksi_api.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Minio;
+using Minio.Exceptions;
+using System.IO;
+using Minio.DataModel.Args;
 
 namespace rahayu_konveksi_api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class EmployeesController(EmployeesService employeesService) : ControllerBase
+    public class EmployeesController(EmployeesService employeesService, IMinioClient minioClient) : ControllerBase
     {
         private readonly EmployeesService _employeesService = employeesService;
+        private readonly IMinioClient _minioClient = minioClient;
 
         // GET: api/employees
         [HttpGet]
@@ -36,21 +41,75 @@ namespace rahayu_konveksi_api.Controllers
         // POST: api/employees
         [HttpPost]
         [Authorize]
-        public async Task<ActionResult<Employee>> CreateEmployee([FromBody] Employee employee)
+        public async Task<ActionResult<Employee>> CreateEmployee([FromForm] Employee employee, IFormFile image)
         {
-            await _employeesService.CreateEmployeeAsync(employee);
-            return CreatedAtAction(nameof(GetEmployeeById), new { id = employee.Id }, employee);
+            if (image != null)
+            {
+                var bucketName = "rahayu-konveksi";
+                var objectName = $"{employee.Name.Replace(" ", "-")}.jpg";
+                var filePath = Path.Combine(Path.GetTempPath(), objectName);
+                try
+                {
+                    var putObjectArgs = new PutObjectArgs()
+                            .WithBucket(bucketName)
+                            .WithObject(objectName)
+                            .WithFileName(filePath)
+                            .WithContentType("application/octet-stream");
+
+                    await _minioClient.PutObjectAsync(putObjectArgs).ConfigureAwait(false);
+                    employee.Photo = $"https://minio-q00wcwgsscsgk8k8socss0ws.34.126.166.246.sslip.io/{bucketName}/{objectName}";
+                    await _employeesService.CreateEmployeeAsync(employee);
+                    return CreatedAtAction(nameof(GetEmployeeById), new { id = employee.Id }, employee);
+                }
+                catch (MinioException ex)
+                {
+                    return BadRequest(new { message = $"Error uploading photo: {ex.Message}" });
+                }
+            }
+            else
+            {
+                return BadRequest(new { message = "Photo is required" });
+            }
         }
 
         // PUT: api/employees/{id}
         [HttpPut("{id}")]
         [Authorize]
-        public async Task<IActionResult> UpdateEmployee(string id, [FromBody] Employee employeeIn)
+        public async Task<IActionResult> UpdateEmployee(string id, [FromForm] Employee employeeIn, IFormFile image)
         {
             var employee = await _employeesService.GetEmployeeByIdAsync(id);
             if (employee == null)
             {
                 return NotFound(new { message = "Employee not found" });
+            }
+
+            if (image != null)
+            {
+                var bucketName = "rahayu-konveksi";
+                var objectName = $"{employeeIn.Name.Replace(" ", "-")}.jpg";
+                var filePath = Path.Combine(Path.GetTempPath(), objectName);
+
+                try
+                {
+                    var putObjectArgs = new PutObjectArgs()
+                        .WithBucket(bucketName)
+                        .WithObject(objectName)
+                        .WithFileName(filePath)
+                        .WithContentType("application/octet-stream");
+
+                    await _minioClient.PutObjectAsync(putObjectArgs).ConfigureAwait(false);
+
+                    // Set the public URL of the uploaded image
+                    employeeIn.Photo = $"https://minio-q00wcwgsscsgk8k8socss0ws.34.126.166.246.sslip.io/{bucketName}/{objectName}";
+                }
+                catch (MinioException ex)
+                {
+                    return BadRequest(new { message = $"Error uploading photo: {ex.Message}" });
+                }
+            }
+            else
+            {
+                employeeIn.Photo = employee.Photo; // Retain the existing photo if none is provided
             }
 
             employeeIn.Id = id;
@@ -69,26 +128,28 @@ namespace rahayu_konveksi_api.Controllers
             {
                 return NotFound(new { message = "Employee not found" });
             }
+
+            if (!string.IsNullOrEmpty(employee.Photo))
+            {
+                var bucketName = "rahayu-konveksi";
+                var objectName = employee.Photo.Substring(employee.Photo.LastIndexOf('/') + 1);
+
+                try
+                {
+                    var removeObjectArgs = new RemoveObjectArgs()
+                        .WithBucket(bucketName)
+                        .WithObject(objectName);
+
+                    await _minioClient.RemoveObjectAsync(removeObjectArgs);
+                }
+                catch (MinioException ex)
+                {
+                    return BadRequest(new { message = $"Error deleting photo: {ex.Message}" });
+                }
+            }
+
             await _employeesService.DeleteEmployeeAsync(id);
             return Ok(new { message = "Employee deleted successfully" });
-        }
-
-        // GET: api/employees/status/{status}
-        [HttpGet("status/{status}")]
-        [Authorize]
-        public async Task<ActionResult<List<Employee>>> GetEmployeesByStatus(string status)
-        {
-            var employees = await _employeesService.GetEmployeesByStatusAsync(status);
-            return Ok(employees);
-        }
-
-        // GET: api/employees/position/{position}
-        [HttpGet("position/{position}")]
-        [Authorize]
-        public async Task<ActionResult<List<Employee>>> GetEmployeesByPosition(string position)
-        {
-            var employees = await _employeesService.GetEmployeesByPositionAsync(position);
-            return Ok(employees);
         }
     }
 }

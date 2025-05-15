@@ -18,5 +18,5 @@ public class Employee {
     public string Position { get; set; } = null!;
 
     [BsonElement("foto")]
-    public string Photo { get; set; } = null!;
+    public string? Photo { get; set; } = null;
 }

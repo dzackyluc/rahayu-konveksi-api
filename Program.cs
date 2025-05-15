@@ -3,6 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using rahayu_konveksi_api.Models;
 using rahayu_konveksi_api.Services;
 using System.Text;
+using Minio;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,9 +39,36 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+// Add CORS configuration
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
+// Add MinIO client configuration
+builder.Services.AddSingleton<IMinioClient>(sp =>
+{
+    var config = sp.GetRequiredService<IConfiguration>();
+    var endpoint = config["Minio:Endpoint"];
+    var accessKey = config["Minio:AccessKey"];
+    var secretKey = config["Minio:SecretKey"];
+    return new MinioClient()
+        .WithEndpoint(endpoint)
+        .WithCredentials(accessKey, secretKey)
+        .WithSSL()
+        .Build();
+});
+
 var app = builder.Build();
 
 app.UseHttpsRedirection();
+
+app.UseCors("AllowAll");
 
 app.UseAuthentication();
 app.UseAuthorization();

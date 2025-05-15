@@ -18,7 +18,7 @@ namespace rahayu_konveksi_api.Controllers
             var ewallet = await _ewalletService.GetEwalletBalanceAsync();
             if (ewallet == null)
             {
-                return NotFound(new { message = "Ewallet not found" });
+                return NotFound(new { message = "Cannot connect to xendit service" });
             }
             return Ok(new { balance = ewallet });
         }

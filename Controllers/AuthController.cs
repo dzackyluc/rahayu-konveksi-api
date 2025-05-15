@@ -56,7 +56,7 @@ namespace rahayu_konveksi_api.Controllers
 
         // POST: api/auth/getAllUsers
         [HttpGet("getAllUsers")]
-        // [Authorize]
+        [Authorize]
         public async Task<IActionResult> GetAllUsers()
         {
             var users = await _usersService.GetAllUsersAsync();
