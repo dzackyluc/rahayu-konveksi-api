@@ -19,5 +19,5 @@ public class Product
     public string Category { get; set; } = null!;
 
     [BsonElement("gambar")]
-    public string Photo { get; set; } = null!;
+    public string? Photo { get; set; } = null;
 }

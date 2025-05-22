@@ -48,6 +48,12 @@ namespace rahayu_konveksi_api.Controllers
                 var bucketName = "rahayu-konveksi";
                 var objectName = $"{employee.Name.Replace(" ", "-")}.jpg";
                 var filePath = Path.Combine(Path.GetTempPath(), objectName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
+                {
+                    await image.CopyToAsync(stream);
+                }
+                
                 try
                 {
                     var putObjectArgs = new PutObjectArgs()
@@ -88,6 +94,11 @@ namespace rahayu_konveksi_api.Controllers
                 var bucketName = "rahayu-konveksi";
                 var objectName = $"{employeeIn.Name.Replace(" ", "-")}.jpg";
                 var filePath = Path.Combine(Path.GetTempPath(), objectName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
+                {
+                    await image.CopyToAsync(stream);
+                }
 
                 try
                 {

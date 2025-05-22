@@ -33,6 +33,15 @@ public class XenditWebhookController(ILogger<XenditWebhookController> logger, IO
             // TODO: Handle various event types (e.g., "invoice.expired", "virtual_account.paid")
             // Example:
             // if (eventType == "invoice.expired") { ... }
+            if (eventType == "payout_link.expired")
+            {
+                // Handle payout link expired event
+                _logger.LogInformation("Payout link expired event received");
+            }
+            else if (eventType == "payout_link.claimed")
+            {
+                _logger.LogInformation("Payout link claimed event received");
+            }
         }
         else
         {
@@ -42,5 +51,44 @@ public class XenditWebhookController(ILogger<XenditWebhookController> logger, IO
         }
 
         return Ok();
+    }
+
+    [HttpPost("disbursement")]
+    public IActionResult Disbursement([FromBody] JsonElement payload)
+    {
+        // 1. Verify token
+        if (!Request.Headers.TryGetValue(XenditTokenHeader, out var token) ||
+            token != ExpectedToken)
+        {
+            _logger.LogWarning("Invalid Xendit webhook token");
+            return Unauthorized();
+        }
+        else
+        {
+            _logger.LogInformation("Received Xendit disbursement event");
+            _logger.LogInformation("Payload: {Payload}", payload.ToString());
+
+            if (payload.TryGetProperty("external_id", out var externalIdElement))
+            {
+                string externalId = externalIdElement.GetString() ?? string.Empty;
+                // _logger.LogInformation("External ID: {ExternalId}", externalId);
+                if (externalId.StartsWith("demo"))
+                {
+                    // Handle demo disbursement
+                    _logger.LogInformation("Demo disbursement received with external ID: {ExternalId}", externalId);
+                }
+                else
+                {
+                    // Handle real disbursement
+                    _logger.LogInformation("Real disbursement received with external ID: {ExternalId}", externalId);
+                }
+            }
+            else
+            {
+                _logger.LogWarning("External ID not found in payload");
+            }
+
+            return Ok();
+        }
     }
 }

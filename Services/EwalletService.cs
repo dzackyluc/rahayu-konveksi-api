@@ -7,7 +7,7 @@ namespace rahayu_konveksi_api.Services
 {
     public class EwalletService
     {
-        private readonly HttpClient client = new();    
+        private readonly HttpClient client = new();
 
         public EwalletService(IOptions<XenditConnectionSettings> xenditConnectionSettings)
         {
@@ -32,6 +32,47 @@ namespace rahayu_konveksi_api.Services
                 var balance = jsonDocument.RootElement.GetProperty("balance").GetInt32(); // Replace "balance" with the actual key
 
                 return balance;
+            }
+            else
+            {
+                Console.WriteLine($"Error: {response.StatusCode} - {response.ReasonPhrase}");
+                return null;
+            }
+        }
+
+        public async Task<string?> GetEwalletTransactionsAsync()
+        {
+            HttpResponseMessage response = await client.GetAsync("transactions");
+            if (response.IsSuccessStatusCode)
+            {
+                var jsonResponse = await response.Content.ReadAsStringAsync();
+                return jsonResponse;
+            }
+            else
+            {
+                Console.WriteLine($"Error: {response.StatusCode} - {response.ReasonPhrase}");
+                return null;
+            }
+        }
+        
+        public async Task<JsonElement?> CreatePayoutAsync(string external_id, int amount, string email)
+        {
+            var payload = new
+            {
+                external_id = external_id,
+                amount = amount,
+                email = email
+            };
+
+            var jsonPayload = JsonSerializer.Serialize(payload);
+            var content = new StringContent(jsonPayload, System.Text.Encoding.UTF8, "application/json");
+
+            HttpResponseMessage response = await client.PostAsync("payouts", content);
+            if (response.IsSuccessStatusCode)
+            {
+                var jsonResponse = await response.Content.ReadAsStringAsync();
+                var jsonDocument = JsonDocument.Parse(jsonResponse);
+                return jsonDocument.RootElement.Clone();
             }
             else
             {

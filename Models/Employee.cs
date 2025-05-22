@@ -11,6 +11,9 @@ public class Employee {
     [BsonElement("nama")]
     public string Name { get; set; } = null!;
 
+    [BsonElement("email")]
+    public string Email { get; set; } = null!;
+
     [BsonElement("status")]
     public string Status { get; set; } = null!;
 

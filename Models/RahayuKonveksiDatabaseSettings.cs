@@ -8,4 +8,6 @@ public class RahayuKonveksiDatabaseSettings
     public string EmployeesCollectionName { get; set; } = null!;
     public string ProductsCollectionName { get; set; } = null!;
     public string OrdersCollectionName { get; set; } = null!;
+    public string TransactionsCollectionName { get; set; } = null!;
+    public string GeneralsCollectionName { get; set; } = null!;
 }
