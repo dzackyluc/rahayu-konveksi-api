@@ -42,7 +42,8 @@ namespace rahayu_konveksi_api.Controllers
 
         // POST: api/ewallet/payout/generals
         [HttpPost("payout/generals")]
-        public async Task<ActionResult<General>> CreatePayoutForGenerals([FromBody]General general)
+        [Authorize]
+        public async Task<ActionResult<General>> CreatePayoutForGenerals([FromBody] General general)
         {
             if (general == null)
             {
