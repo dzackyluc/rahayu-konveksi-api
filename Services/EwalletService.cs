@@ -42,7 +42,7 @@ namespace rahayu_konveksi_api.Services
 
         public async Task<string?> GetEwalletTransactionsAsync()
         {
-            HttpResponseMessage response = await client.GetAsync("transactions");
+            HttpResponseMessage response = await client.GetAsync("transactions?limit=30");
             if (response.IsSuccessStatusCode)
             {
                 var jsonResponse = await response.Content.ReadAsStringAsync();

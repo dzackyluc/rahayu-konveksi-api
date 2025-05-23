@@ -2,6 +2,7 @@ using rahayu_konveksi_api.Models;
 using rahayu_konveksi_api.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Text;
+using Microsoft.AspNetCore.Authorization;
 
 namespace rahayu_konveksi_api.Controllers
 {
@@ -15,6 +16,7 @@ namespace rahayu_konveksi_api.Controllers
         // GET: api/ewallet/balance
         // This endpoint retrieves the balance of the ewallet.
         [HttpGet("balance")]
+        [Authorize]
         public async Task<IActionResult> GetEwalletBalance()
         {
             var ewallet = await _ewalletService.GetEwalletBalanceAsync();
@@ -27,6 +29,7 @@ namespace rahayu_konveksi_api.Controllers
 
         // POST: api/ewallet/transactions
         [HttpGet("transactions")]
+        [Authorize]
         public async Task<IActionResult> GetEwalletTransactions()
         {
             var transactions = await _ewalletService.GetEwalletTransactionsAsync();
@@ -53,7 +56,7 @@ namespace rahayu_konveksi_api.Controllers
                 return NotFound(new { message = "Cannot connect to xendit service" });
             }
             general.Status = payoutResponse.Value.GetProperty("status").GetString() ?? string.Empty;
-            general.XenditRef = payoutResponse.Value.GetProperty("external_id").GetString() ?? string.Empty;
+            general.XenditRef = payoutResponse.Value.GetProperty("id").GetString() ?? string.Empty;
 
             // Save the general to the database
             await _generalsService.CreateGeneralAsync(general);
