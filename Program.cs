@@ -22,6 +22,8 @@ builder.Services.AddSingleton<EmployeesService>();
 builder.Services.AddSingleton<ProductsService>();
 builder.Services.AddSingleton<EwalletService>();
 builder.Services.AddSingleton<GeneralsService>();
+builder.Services.AddSingleton<LoansService>();
+builder.Services.AddSingleton<PayrollsService>();
 
 // Add JWT Authentication
 var key = Encoding.ASCII.GetBytes("GenBadaiKelompok5xRahayuKonveksi2025"); // Replace with a secure key

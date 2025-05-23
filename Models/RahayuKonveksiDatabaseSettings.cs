@@ -10,4 +10,6 @@ public class RahayuKonveksiDatabaseSettings
     public string OrdersCollectionName { get; set; } = null!;
     public string TransactionsCollectionName { get; set; } = null!;
     public string GeneralsCollectionName { get; set; } = null!;
+    public string LoansCollectionName { get; set; } = null!;
+    public string PayrollsCollectionName { get; set; } = null!;
 }
