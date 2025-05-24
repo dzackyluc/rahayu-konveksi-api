@@ -4,6 +4,9 @@ using rahayu_konveksi_api.Models;
 using rahayu_konveksi_api.Services;
 using System.Text;
 using Minio;
+using DotNetEnv;
+
+DotNetEnv.Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 

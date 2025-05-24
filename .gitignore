@@ -76,8 +76,7 @@ $RECYCLE.BIN/
 Icon?
 ._*
 
-# Configuration files
-appsettings.json
-appsettings.*.json
+# Environment variables
+.env
 
 # End of file
