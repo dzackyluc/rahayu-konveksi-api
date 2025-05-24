@@ -8,12 +8,13 @@ namespace rahayu_konveksi_api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class EwalletController(EwalletService ewalletService, GeneralsService generalsService, LoansService loansService, PayrollsService payrollsService) : ControllerBase
+    public class EwalletController(EwalletService ewalletService, GeneralsService generalsService, LoansService loansService, PayrollsService payrollsService, OrdersService ordersService) : ControllerBase
     {
         private readonly EwalletService _ewalletService = ewalletService;
         private readonly GeneralsService _generalsService = generalsService;
         private readonly LoansService _loansService = loansService;
         private readonly PayrollsService _payrollsService = payrollsService;
+        private readonly OrdersService _ordersService = ordersService;
 
         // GET: api/ewallet/balance
         // This endpoint retrieves the balance of the ewallet.
@@ -127,6 +128,30 @@ namespace rahayu_konveksi_api.Controllers
             // Save the payroll to the database
             await _payrollsService.CreatePayrollAsync(payroll);
             return CreatedAtAction(nameof(GetEwalletTransactions), new { id = payroll.Id }, payroll);
+        }
+
+        // POST: api/ewallet/payment/orders
+        [HttpPost("payment/orders")]
+        [Authorize]
+        public async Task<ActionResult<Order>> CreatePaymentForOrders([FromBody] Order order)
+        {
+            if (order == null)
+            {
+                return BadRequest(new { message = "Invalid request" });
+            }
+
+            var payoutResponse = await _ewalletService.CreatePaymentAsync($"order-{Encoding.ASCII.GetBytes(order.CustomerName)}", order.TotalPrice, order.Extras);
+            if (payoutResponse == null)
+            {
+                return NotFound(new { message = "Cannot connect to xendit service" });
+            }
+            order.Status = payoutResponse.Value.GetProperty("status").GetString() ?? string.Empty;
+            order.XenditRef = payoutResponse.Value.GetProperty("id").GetString() ?? string.Empty;
+            order.PaymentUrl = payoutResponse.Value.GetProperty("invoice_url").GetString() ?? string.Empty;
+
+            // Save the order to the database
+            await _ordersService.CreateOrderAsync(order);
+            return CreatedAtAction(nameof(GetEwalletTransactions), new { id = order.Id }, order);
         }
     }
 }

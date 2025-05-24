@@ -54,7 +54,7 @@ namespace rahayu_konveksi_api.Services
                 return null;
             }
         }
-        
+
         public async Task<JsonElement?> CreatePayoutAsync(string external_id, int amount, string email)
         {
             var payload = new
@@ -68,6 +68,32 @@ namespace rahayu_konveksi_api.Services
             var content = new StringContent(jsonPayload, System.Text.Encoding.UTF8, "application/json");
 
             HttpResponseMessage response = await client.PostAsync("payouts", content);
+            if (response.IsSuccessStatusCode)
+            {
+                var jsonResponse = await response.Content.ReadAsStringAsync();
+                var jsonDocument = JsonDocument.Parse(jsonResponse);
+                return jsonDocument.RootElement.Clone();
+            }
+            else
+            {
+                Console.WriteLine($"Error: {response.StatusCode} - {response.ReasonPhrase}");
+                return null;
+            }
+        }
+
+        public async Task<JsonElement?> CreatePaymentAsync(string external_id, int amount, List<ExtrasDTO> items)
+        {
+            var payload = new
+            {
+                external_id = external_id,
+                amount = amount,
+                items = items
+            };
+
+            var jsonPayload = JsonSerializer.Serialize(payload);
+            var content = new StringContent(jsonPayload, System.Text.Encoding.UTF8, "application/json");
+
+            HttpResponseMessage response = await client.PostAsync("v2/invoices", content);
             if (response.IsSuccessStatusCode)
             {
                 var jsonResponse = await response.Content.ReadAsStringAsync();
